@@ -3,7 +3,7 @@
 Status: In Review
 Priority: High
 Created: 2026-07-23 20:00
-Request: Buat migrations PostgreSQL untuk seluruh tabel sesuai docs/SRS.md: users (sso_id, sso_role, role lokal, token fields), novels, novel_alt_titles, creators, novel_author, novel_illustrator, volumes, chapters (dengan status draft/on_revision/published), genres, tags, novel_genre, novel_tag, favorites (device-based), chapter_reads (device-based), tickets. Termasuk constraint UNIQUE dan enum sesuai spek.
+Request: Create the PostgreSQL migrations for all tables per docs/SRS.md: users (sso_id, sso_role, local role, token fields), novels, novel_alt_titles, creators, novel_author, novel_illustrator, volumes, chapters (with draft/on_revision/published status), genres, tags, novel_genre, novel_tag, favorites (device-based), chapter_reads (device-based), tickets. Including UNIQUE constraints and enums per the spec.
 
 ---
 

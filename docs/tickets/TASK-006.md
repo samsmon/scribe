@@ -1,9 +1,9 @@
-# TASK-006: Admin — Moderasi Novel/Chapter & CRUD Genre/Tag
+# TASK-006: Admin — Novel/Chapter Moderation & Genre/Tag CRUD
 
 Status: In Review
 Priority: Medium
 Created: 2026-07-23 20:00
-Request: Halaman admin untuk list & delete novel/chapter yang melanggar (moderasi konten). Plus CRUD master data genre dan tag (name, slug) yang nantinya dipilih translator saat attach ke novel (lihat TASK-009).
+Request: An admin page to list & delete violating novels/chapters (content moderation). Plus CRUD for the genre and tag master data (name, slug) that translators later pick when attaching to a novel (see TASK-009).
 
 ---
 

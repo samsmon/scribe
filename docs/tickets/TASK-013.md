@@ -3,7 +3,7 @@
 Status: In Review
 Priority: High
 Created: 2026-07-23 20:00
-Request: Halaman detail novel publik: sinopsis, cover, judul original + judul alternatif, author/illustrator, info bahasa asal/tujuan, status, genre, tag, daftar chapter dikelompokkan per volume (chapter tanpa volume tampil flat). Chapter published tampil normal (bisa diklik); chapter draft tidak tampil; chapter on_revision tampil dengan badge "sedang disunting" dan tidak bisa diklik.
+Request: The public novel detail page: synopsis, cover, original title + alternative titles, author/illustrator, origin/target language info, status, genres, tags, and the chapter list grouped by volume (chapters without a volume are shown flat). Published chapters display normally (clickable); draft chapters are not shown; on_revision chapters are shown with a "being revised" badge and are not clickable.
 
 ---
 

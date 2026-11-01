@@ -3,7 +3,7 @@
 Status: In Review
 Priority: High
 Created: 2026-07-23 20:00
-Request: Implement OAuth2 Authorization Code + PKCE flow ke sso.whitearchive.id sesuai AI_INTEGRATION.md — redirect login, callback dengan validasi state, tukar code ke token, profile sync ke local `users` (sso_id, name, username, email, sso_role). Logout wajib 2 tahap: clear session lokal lalu redirect ke SSO logout. Role mapping: SSO `superadmin` → Scribe `admin`, SSO `user` (login pertama) → Scribe `pending`. Env vars: SSO_CLIENT_ID, SSO_CLIENT_SECRET, SSO_REDIRECT_URI, SSO_BASE_URL.
+Request: Implement the OAuth2 Authorization Code + PKCE flow to sso.whitearchive.id per AI_INTEGRATION.md: login redirect, callback with state validation, code-to-token exchange, profile sync to the local `users` (sso_id, name, username, email, sso_role). Logout must be 2-step: clear the local session, then redirect to SSO logout. Role mapping: SSO `superadmin` → Scribe `admin`, SSO `user` (first login) → Scribe `pending`. Env vars: SSO_CLIENT_ID, SSO_CLIENT_SECRET, SSO_REDIRECT_URI, SSO_BASE_URL.
 
 ---
 

@@ -1,8 +1,8 @@
 # Scribe
 
-Platform CMS publishing light novel terpusat untuk freelance translator dan reader.
+A centralized light novel publishing CMS for freelance translators and readers.
 
-**Reader tanpa login** — browse dan baca langsung, tracking favorite & progress baca berbasis device (bukan akun). **Translator & admin login via SSO whitearchive.id.** Tidak ada subdomain per translator — semua karya tampil di satu katalog.
+**Readers need no login**: they browse and read directly, and favorites & reading progress are tracked per device (not per account). **Translators & admins log in via SSO whitearchive.id.** There is no per-translator subdomain: all works appear in one catalog.
 
 ## Docs
 
@@ -19,21 +19,21 @@ Platform CMS publishing light novel terpusat untuk freelance translator dan read
 
 ## Roles
 
-| Role | Login | Deskripsi |
+| Role | Login | Description |
 |------|-------|-----------|
-| Reader | Tidak perlu | Browse, baca, favorite, continue reading — semua device-based, tanpa akun. |
-| Translator | SSO whitearchive.id | Di-grant admin (default `pending` setelah login pertama). Manage novel & chapter miliknya. |
-| Admin | SSO whitearchive.id (`superadmin`) | Full access: statistik, role management, moderasi, taxonomy, tiket. |
+| Reader | Not required | Browse, read, favorite, continue reading: all device-based, no account. |
+| Translator | SSO whitearchive.id | Granted by an admin (defaults to `pending` after first login). Manages their own novels & chapters. |
+| Admin | SSO whitearchive.id (`superadmin`) | Full access: statistics, role management, moderation, taxonomy, tickets. |
 
 ---
 
 ## Features
 
-- **Reader anonim** — browse (filter genre/tag/search), baca chapter, favorite, continue reading + indikator baca/belum, semua tanpa akun (device-based)
-- **Translator dashboard** — CRUD novel (judul original + judul alternatif multi-bahasa, cover, author/illustrator via autocomplete, genre/tag), CRUD volume (opsional), CRUD chapter dengan editor blog-style (Tiptap, sisip gambar) + autosave
-- **Status chapter 3 tingkat** — draft (privat), on_revision (tampil dengan badge, tidak bisa dibuka), published (langsung tampil, tanpa approval admin)
-- **Admin panel** — dashboard statistik, lihat user (read-only, data dari SSO) + grant/revoke role translator, moderasi konten, CRUD genre/tag, kelola tiket
-- **Ticketing** — translator → superadmin (bug/feature request), reader → superadmin atau translator tertentu
+- **Anonymous reader**: browse (genre/tag filter, search), read chapters, favorite, continue reading + read/unread indicator, all without an account (device-based)
+- **Translator dashboard**: novel CRUD (original title + multi-language alternative titles, cover, author/illustrator via autocomplete, genre/tag), volume CRUD (optional), chapter CRUD with a blog-style editor (Tiptap, inline images) + autosave
+- **3-level chapter status**: draft (private), on_revision (shown with a badge, cannot be opened), published (shown immediately, no admin approval)
+- **Admin panel**: statistics dashboard, view users (read-only, data from SSO) + grant/revoke the translator role, content moderation, genre/tag CRUD, ticket management
+- **Ticketing**: translator → superadmin (bug/feature request), reader → superadmin or a specific translator
 
 ---
 
@@ -107,7 +107,7 @@ cp .env.example .env
 php artisan key:generate
 ```
 
-Set di `backend/.env`:
+Set in `backend/.env`:
 ```env
 APP_URL=http://localhost:8000
 DB_CONNECTION=pgsql
@@ -126,7 +126,7 @@ SSO_BASE_URL=https://sso.whitearchive.id
 ```bash
 php artisan migrate
 npm install
-npm run dev          # Vite dev server (HMR untuk React)
+npm run dev          # Vite dev server (HMR for React)
 php artisan serve    # → http://localhost:8000
 ```
 
@@ -144,12 +144,12 @@ php artisan serve    # → http://localhost:8000
 
 ## Security
 
-- Auth sepenuhnya via SSO (OAuth2 + PKCE) — tidak ada password lokal, tidak ada register form
-- Logout wajib 2 tahap: clear session lokal + redirect SSO logout
-- Authorization via Laravel Policy — translator hanya bisa modifikasi konten miliknya
-- Admin tidak bisa edit profil user (nama/email/avatar) — murni domain SSO, admin cuma atur role lokal
-- Reader tracking (favorite, reading progress) anonim berbasis `device_id`, tidak terikat identitas apapun
-- Rate-limit submission tiket dari reader anonim untuk cegah spam
+- Auth is entirely via SSO (OAuth2 + PKCE): no local passwords, no register form
+- Logout is mandatory 2-step: clear the local session + redirect to SSO logout
+- Authorization via Laravel Policy: translators can only modify their own content
+- Admins cannot edit user profiles (name/email/avatar): that is purely SSO's domain, admins only manage the local role
+- Reader tracking (favorites, reading progress) is anonymous and based on `device_id`, not tied to any identity
+- Rate-limit ticket submissions from anonymous readers to prevent spam
 
 ---
 

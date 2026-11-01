@@ -1,54 +1,54 @@
 # Scribe — User Flow & Auth Sequence
 
-## Alur Utama (Reader, Translator, Admin)
+## Main Flow (Reader, Translator, Admin)
 
 ```mermaid
 flowchart TD
-    Start([Akses scribe.whitearchive.id]) --> Visitor{Siapa yang akses?}
+    Start([Visit scribe.whitearchive.id]) --> Visitor{Who is visiting?}
 
-    Visitor -->|Reader anonim| RGetDevice[Generate/ambil device_id dari cookie]
-    RGetDevice --> RBrowse[Browse novel: filter genre/tag/status, search judul]
-    RBrowse --> RDetail[Buka halaman detail novel]
-    RDetail --> RChapterList{Status chapter?}
-    RChapterList -->|published| RRead[Baca chapter]
-    RChapterList -->|on_revision| RBlocked["Badge 'sedang disunting', tidak bisa dibuka"]
-    RChapterList -->|draft| RHidden[Tidak tampil ke reader]
+    Visitor -->|Anonymous reader| RGetDevice[Generate/get device_id from cookie]
+    RGetDevice --> RBrowse[Browse novels: genre/tag/status filters, title search]
+    RBrowse --> RDetail[Open the novel detail page]
+    RDetail --> RChapterList{Chapter status?}
+    RChapterList -->|published| RRead[Read chapter]
+    RChapterList -->|on_revision| RBlocked["'Under revision' badge, cannot be opened"]
+    RChapterList -->|draft| RHidden[Not shown to readers]
     RRead --> RTrack[Upsert chapter_reads by device_id]
-    RTrack --> RContinue["Muncul di /continue-reading + indikator baca/belum"]
-    RDetail --> RFav[Favorite novel - device based]
-    RFav --> RFavList[Muncul di /favorites]
-    RRead --> RTicket["Opsional: kirim tiket ke translator/superadmin"]
+    RTrack --> RContinue["Appears in /continue-reading + read/unread indicator"]
+    RDetail --> RFav[Favorite a novel - device based]
+    RFav --> RFavList[Appears in /favorites]
+    RRead --> RTicket["Optional: send a ticket to a translator/superadmin"]
 
-    Visitor -->|Translator / Admin| SSOLogin["Klik Login -> redirect SSO authorize + PKCE"]
-    SSOLogin --> SSOCallback["Callback: tukar code, sync profile"]
-    SSOCallback --> RoleCheck{Role dari SSO?}
-    RoleCheck -->|superadmin| AdminRole[Role lokal = admin]
-    RoleCheck -->|user, login pertama| PendingRole[Role lokal = pending]
-    PendingRole --> WaitGrant[Menunggu admin grant akses]
-    WaitGrant -->|di-grant admin| TranslatorRole[Role lokal = translator]
+    Visitor -->|Translator / Admin| SSOLogin["Click Login -> redirect to SSO authorize + PKCE"]
+    SSOLogin --> SSOCallback["Callback: exchange code, sync profile"]
+    SSOCallback --> RoleCheck{Role from SSO?}
+    RoleCheck -->|superadmin| AdminRole[Local role = admin]
+    RoleCheck -->|user, first login| PendingRole[Local role = pending]
+    PendingRole --> WaitGrant[Waiting for an admin to grant access]
+    WaitGrant -->|granted by admin| TranslatorRole[Local role = translator]
 
-    TranslatorRole --> Dashboard[Dashboard translator]
-    Dashboard --> NovelCRUD["CRUD novel: judul + judul alternatif, cover, author/illustrator, genre/tag"]
-    NovelCRUD --> VolumeCRUD[CRUD volume - opsional]
-    VolumeCRUD --> ChapterEditor[Tulis chapter: editor blog-style + sisip gambar]
-    ChapterEditor --> Autosave[Autosave berkala saat mengetik]
-    Autosave --> StatusToggle{Translator set status chapter}
-    StatusToggle -->|draft| Draft[Privat, belum tampil ke reader]
-    StatusToggle -->|published| Published[Langsung tampil ke reader, tanpa approval admin]
-    StatusToggle -->|on_revision| Revision[Tampil dengan badge, tidak bisa dibuka reader]
-    Dashboard --> TranslatorTicket[Kirim tiket bug/feature ke superadmin]
+    TranslatorRole --> Dashboard[Translator dashboard]
+    Dashboard --> NovelCRUD["Novel CRUD: title + alternative titles, cover, author/illustrator, genre/tag"]
+    NovelCRUD --> VolumeCRUD[Volume CRUD - optional]
+    VolumeCRUD --> ChapterEditor[Write a chapter: blog-style editor + inline images]
+    ChapterEditor --> Autosave[Periodic autosave while typing]
+    Autosave --> StatusToggle{Translator sets chapter status}
+    StatusToggle -->|draft| Draft[Private, not yet shown to readers]
+    StatusToggle -->|published| Published[Shown to readers immediately, no admin approval]
+    StatusToggle -->|on_revision| Revision[Shown with a badge, readers cannot open it]
+    Dashboard --> TranslatorTicket[Send a bug/feature ticket to the superadmin]
 
     AdminRole --> AdminPanel[Admin panel]
-    AdminPanel --> AdminStats[Dashboard statistik platform]
-    AdminPanel --> AdminUsers["Lihat user - read only + grant/revoke role translator"]
-    AdminPanel --> AdminModerate[Moderasi novel/chapter melanggar]
-    AdminPanel --> AdminTaxonomy[CRUD genre & tag]
-    AdminPanel --> AdminTickets[Kelola tiket masuk dari translator & reader]
+    AdminPanel --> AdminStats[Platform statistics dashboard]
+    AdminPanel --> AdminUsers["View users - read only + grant/revoke the translator role"]
+    AdminPanel --> AdminModerate[Moderate violating novels/chapters]
+    AdminPanel --> AdminTaxonomy[Genre & tag CRUD]
+    AdminPanel --> AdminTickets[Manage incoming tickets from translators & readers]
 ```
 
 ---
 
-## SSO Auth Sequence (Login & Logout 2 Tahap)
+## SSO Auth Sequence (Login & 2-Step Logout)
 
 ```mermaid
 sequenceDiagram
@@ -57,31 +57,31 @@ sequenceDiagram
     participant SSO as sso.whitearchive.id
 
     U->>S: GET /auth/login
-    S->>S: Generate PKCE verifier+challenge, state -> simpan di session
-    S-->>U: Redirect ke SSO authorize
+    S->>S: Generate PKCE verifier+challenge, state -> store in session
+    S-->>U: Redirect to SSO authorize
     U->>SSO: GET /oauth/authorize (client_id, code_challenge, state)
-    SSO-->>U: Redirect ke /auth/callback?code=...&state=...
+    SSO-->>U: Redirect to /auth/callback?code=...&state=...
     U->>S: GET /auth/callback
-    S->>S: Validasi state terhadap session
+    S->>S: Validate state against the session
     S->>SSO: POST /oauth/token (code + code_verifier)
     SSO-->>S: access_token (60m), refresh_token (30d)
     S->>SSO: GET /api/user (Bearer access_token)
     SSO-->>S: profile: sso_id, name, username, email, sso_role
-    S->>S: Upsert local users, map role (superadmin->admin, user->pending), buat session
-    S-->>U: Redirect ke dashboard/admin
+    S->>S: Upsert local users, map role (superadmin->admin, user->pending), create session
+    S-->>U: Redirect to dashboard/admin
 
-    Note over U,SSO: Logout wajib 2 tahap - skip tahap 2 = auto-login berikutnya
+    Note over U,SSO: Logout is mandatory 2-step - skipping step 2 = auto-login next time
     U->>S: POST /auth/logout
-    S->>S: Hapus session lokal
-    S-->>U: Redirect ke SSO /logout?redirect_uri=...
+    S->>S: Delete the local session
+    S-->>U: Redirect to SSO /logout?redirect_uri=...
     U->>SSO: GET /logout
-    SSO-->>U: Redirect balik ke Scribe, SSO session invalid
+    SSO-->>U: Redirect back to Scribe, SSO session invalidated
 ```
 
 ---
 
-## Catatan
+## Notes
 
-- Reader tidak pernah menyentuh alur SSO — seluruh interaksi reader anonim, murni berbasis `device_id` di cookie/localStorage.
-- Tidak ada langkah approval/publish-request antara "translator set published" dan "chapter tampil ke reader" — platform terpusat, publish langsung.
-- Chapter `on_revision` tetap ada di database dan tetap terhubung ke novel/volume-nya, hanya disembunyikan dari akses baca reader.
+- Readers never touch the SSO flow: all reader interaction is anonymous, purely based on a `device_id` in a cookie/localStorage.
+- There is no approval/publish-request step between "translator sets published" and "chapter shown to readers": the platform is centralized, publishing is direct.
+- An `on_revision` chapter stays in the database and stays linked to its novel/volume; it is only hidden from reader access.

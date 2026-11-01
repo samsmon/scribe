@@ -3,7 +3,7 @@
 Status: In Review
 Priority: Medium
 Created: 2026-07-23 20:00
-Request: Endpoint search-as-you-type `/dashboard/creators/search` untuk cari entity `creators` existing by nama. Di form novel, translator bisa pilih author/illustrator dari hasil autocomplete atau bikin creator baru kalau belum ada (create-if-not-exist, cegah duplikat nama). Satu novel bisa punya lebih dari satu author/illustrator.
+Request: A search-as-you-type endpoint `/dashboard/creators/search` to look up existing `creators` entities by name. In the novel form, a translator can pick an author/illustrator from the autocomplete results or create a new creator if missing (create-if-not-exist, prevent duplicate names). A novel can have more than one author/illustrator.
 
 ---
 

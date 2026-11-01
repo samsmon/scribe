@@ -3,9 +3,9 @@
 Status: In Review
 Priority: High
 Created: 2026-07-23 20:00
-Request: Translator dashboard untuk create/edit/delete chapter: chapter_number (decimal 8,1), title (nullable), content via Tiptap editor mirip blog (support sisip gambar di tengah teks), volume_id (opsional), status (draft/on_revision/published). Autosave berkala saat translator mengetik (endpoint PATCH .../chapters/{id}/autosave, update content + last_autosaved_at tanpa ubah status). Validasi UNIQUE(novel_id, volume_id, chapter_number). Chapter berstatus draft atau on_revision tidak boleh diakses reader.
+Request: A translator dashboard to create/edit/delete chapters: chapter_number (decimal 8,1), title (nullable), content via a blog-like Tiptap editor (supports inline images mid-text), volume_id (optional), status (draft/on_revision/published). Periodic autosave while the translator types (endpoint PATCH .../chapters/{id}/autosave, updates content + last_autosaved_at without changing status). Validate UNIQUE(novel_id, volume_id, chapter_number). Chapters with draft or on_revision status must not be accessible to readers.
 
-Termasuk: endpoint upload gambar inline untuk Tiptap (mis. `POST /dashboard/chapters/{id}/images`), simpan ke local disk terpisah dari cover (`storage/app/public/chapter-images/`), kembalikan URL untuk disisipkan editor. Validasi tipe file & ukuran max sama seperti cover image.
+Includes: an inline image upload endpoint for Tiptap (e.g. `POST /dashboard/chapters/{id}/images`), stored on a local disk separate from covers (`storage/app/public/chapter-images/`), returning a URL for the editor to insert. Validate file type & max size the same as cover images.
 
 ---
 

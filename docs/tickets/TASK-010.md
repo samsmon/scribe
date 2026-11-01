@@ -3,7 +3,7 @@
 Status: In Review
 Priority: Medium
 Created: 2026-07-23 20:00
-Request: CRUD volume di bawah novel milik translator — number, title (nullable). Volume bersifat opsional, chapter bisa tidak punya volume sama sekali (tampil flat).
+Request: Volume CRUD under a translator's own novel: number, title (nullable). Volumes are optional; a chapter may have no volume at all (shown flat).
 
 ---
 
