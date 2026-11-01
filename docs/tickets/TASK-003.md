@@ -3,7 +3,7 @@
 Status: In Review
 Priority: High
 Created: 2026-07-23 20:00
-Request: Buat NovelPolicy dan ChapterPolicy — translator hanya boleh update/delete novel & chapter miliknya sendiri. Terapkan role middleware: `pending` tidak bisa akses `/dashboard` sama sekali, `translator` hanya bisa CRUD miliknya, `admin` full access ke `/admin`.
+Request: Create NovelPolicy and ChapterPolicy: a translator may only update/delete their own novels & chapters. Apply role middleware: `pending` cannot access `/dashboard` at all, `translator` can only CRUD their own content, `admin` has full access to `/admin`.
 
 ---
 

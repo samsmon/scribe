@@ -2,14 +2,14 @@
 
 ## Project Overview
 
-Scribe adalah salah satu project di bawah payung White Archive (bukan platform utama White Archive itu sendiri — root domain `whitearchive.id` adalah landing page ekosistem, di luar scope repo ini). Scribe adalah CMS publishing light novel terpusat (bukan subdomain per translator) untuk freelance translator dan reader, hidup di `scribe.whitearchive.id`.
-Translator & admin login via SSO whitearchive.id (identity provider bersama seluruh project White Archive). Reader sepenuhnya anonim, tanpa akun, tracking berbasis device.
+Scribe is one of the projects under the White Archive umbrella (not the main White Archive platform itself: the root domain `whitearchive.id` is the ecosystem landing page, outside the scope of this repo). Scribe is a centralized light novel publishing CMS (not a per-translator subdomain) for freelance translators and readers, living at `scribe.whitearchive.id`.
+Translators & admins log in via SSO whitearchive.id (the identity provider shared by all White Archive projects). Readers are fully anonymous, with no account, and tracking is device-based.
 
 ## Repo Structure
 
 ```
 /
-  backend/    Laravel 11 + Inertia.js (monolith — frontend di-serve dari sini)
+  backend/    Laravel 11 + Inertia.js (monolith: the frontend is served from here)
   docs/       PRD, SRS, STRUCTURE, TODO, tickets
   scripts/    deploy.sh, update.sh
   logs/       sync and deploy logs (gitignored)
@@ -24,7 +24,7 @@ Translator & admin login via SSO whitearchive.id (identity provider bersama selu
 - Database: PostgreSQL
 - Frontend: Inertia.js + React
 - UI: Shadcn UI
-- Rich Text / Blog Editor: Tiptap (chapter content, support sisip gambar)
+- Rich Text / Blog Editor: Tiptap (chapter content, supports inline images)
 - Auth: SSO whitearchive.id (OAuth2 Authorization Code + PKCE) — no local password
 - Storage: Local disk (MVP) → S3/R2 (later) via Laravel Filesystem
 - Domain (staging): scribe.suryatmaja.dev
@@ -35,20 +35,20 @@ Translator & admin login via SSO whitearchive.id (identity provider bersama selu
 
 ## Roles
 
-| Role | Sumber | Deskripsi |
+| Role | Source | Description |
 |------|--------|-----------|
-| Reader | — (anonim) | Tanpa login. Browse, baca, favorite, continue reading — semua device-based via cookie/localStorage `device_id`. |
-| `pending` | SSO `user` (login pertama) | Login sukses tapi belum punya akses dashboard. Menunggu admin grant. |
-| `translator` | Local Scribe (di-grant admin) | Bisa manage novel & chapter miliknya. |
-| `admin` | SSO `superadmin` (auto-mapped) | Full access ke Scribe: dashboard admin, role management, moderasi. |
+| Reader | — (anonymous) | No login. Browse, read, favorite, continue reading: all device-based via a cookie/localStorage `device_id`. |
+| `pending` | SSO `user` (first login) | Login succeeded but no dashboard access yet. Waiting for an admin grant. |
+| `translator` | Local Scribe (granted by an admin) | Can manage their own novels & chapters. |
+| `admin` | SSO `superadmin` (auto-mapped) | Full access to Scribe: admin dashboard, role management, moderation. |
 
-**Role SSO ≠ Role Scribe.** SSO cuma punya `user`/`superadmin`. Scribe simpan role lokal sendiri di kolom `users.role` (`pending`/`translator`/`admin`), terpisah dari `users.sso_role` yang cuma disync sebagai referensi.
+**SSO role ≠ Scribe role.** SSO only has `user`/`superadmin`. Scribe keeps its own local role in the `users.role` column (`pending`/`translator`/`admin`), separate from `users.sso_role`, which is only synced as a reference.
 
 ---
 
 ## Auth: SSO Integration
 
-Wajib pakai OAuth2 Authorization Code + PKCE ke `sso.whitearchive.id`. Referensi lengkap: `AI_INTEGRATION.md` di repo `sso.whitearchive`.
+Must use OAuth2 Authorization Code + PKCE against `sso.whitearchive.id`. Full reference: `AI_INTEGRATION.md` in the `sso.whitearchive` repo.
 
 ### Env Vars (backend/.env)
 
@@ -61,14 +61,14 @@ SSO_BASE_URL=https://sso.whitearchive.id
 
 ### Constraints
 
-- PKCE wajib — tidak ada fallback auth method lain.
-- `state` parameter divalidasi server-side (session), bukan cookie/localStorage.
-- Access token (60 menit) & refresh token (30 hari, single-use) disimpan **terenkripsi** di server, tidak pernah dikirim ke client.
-- Refresh token di-rotate tiap dipakai.
-- **Logout wajib 2 tahap**: (1) hapus session lokal, (2) redirect ke `SSO_BASE_URL/logout` dengan `redirect_uri`. Skip tahap 2 = SSO session masih hidup = auto-login di percobaan berikutnya.
-- Profile sync (`name`, `username`, `email`, `sso_role`) terjadi tiap login — jangan biarkan data lokal basi.
-- Avatar dari SSO **belum tersedia** — pakai placeholder default di UI. Jangan bangun fitur upload/edit avatar sampai ada briefing lanjutan.
-- Admin **tidak boleh** bisa edit nama/email/avatar user di Scribe — itu domain SSO. Admin cuma boleh ubah `users.role` lokal.
+- PKCE is mandatory: there is no fallback auth method.
+- The `state` parameter is validated server-side (session), not via cookie/localStorage.
+- The access token (60 minutes) & refresh token (30 days, single-use) are stored **encrypted** on the server and never sent to the client.
+- The refresh token is rotated on every use.
+- **Logout is mandatory 2-step**: (1) delete the local session, (2) redirect to `SSO_BASE_URL/logout` with `redirect_uri`. Skipping step 2 leaves the SSO session alive, which causes auto-login on the next attempt.
+- Profile sync (`name`, `username`, `email`, `sso_role`) happens on every login: do not let local data go stale.
+- Avatars from SSO are **not available yet**: use a default placeholder in the UI. Do not build an avatar upload/edit feature until there is a follow-up briefing.
+- Admins **must not** be able to edit a user's name/email/avatar in Scribe: that is SSO's domain. Admins may only change the local `users.role`.
 
 ---
 
@@ -76,16 +76,16 @@ SSO_BASE_URL=https://sso.whitearchive.id
 
 ### Constraints
 
-- Inertia.js sebagai jembatan Laravel ↔ React. Controller return `Inertia::render()`.
-- Authorization wajib via Laravel Policies — translator hanya boleh modify novel/chapter miliknya sendiri.
-- Tidak ada publish-approval flow — translator publish novel/chapter langsung (platform terpusat, bukan subdomain per translator).
-- Cover image disimpan di local disk (MVP) via Laravel Filesystem, path relatif.
-- Chapter content disimpan dari Tiptap (markdown/JSON), support gambar inline.
-- Chapter punya autosave — endpoint `PATCH .../chapters/{id}/autosave` update `content` + `last_autosaved_at` tanpa mengubah `status`.
-- `chapter_number` pakai `decimal(8,1)` — mendukung nomor pecahan (1.5) untuk side story/interlude.
-- `volume_id` di tabel chapters nullable — volume opsional.
-- Author & illustrator disimpan sebagai entity (`creators`), bukan free text — resolve via autocomplete, create-if-not-exist.
-- Reader (favorite, chapter_reads) di-key oleh `device_id`, tidak pernah terikat ke `users`.
+- Inertia.js is the bridge between Laravel and React. Controllers return `Inertia::render()`.
+- Authorization must go through Laravel Policies: translators may only modify their own novels/chapters.
+- There is no publish-approval flow: translators publish novels/chapters directly (centralized platform, not a per-translator subdomain).
+- Cover images are stored on local disk (MVP) via Laravel Filesystem, with relative paths.
+- Chapter content is saved from Tiptap (markdown/JSON) and supports inline images.
+- Chapters have autosave: the `PATCH .../chapters/{id}/autosave` endpoint updates `content` + `last_autosaved_at` without changing `status`.
+- `chapter_number` pakai `decimal(8,1)` — supports fractional numbers (1.5) for side stories/interludes.
+- `volume_id` in the chapters table is nullable: volumes are optional.
+- Authors & illustrators are stored as entities (`creators`), not free text: resolved via autocomplete, create-if-not-exist.
+- Reader data (favorites, chapter_reads) is keyed by `device_id` and is never tied to `users`.
 
 ### Commands
 
@@ -99,16 +99,16 @@ npm run dev
 php artisan test
 ```
 
-### Model & Relasi Inti
+### Core Models & Relations
 
-- `User` — hasMany `Novel` (sebagai translator), hasMany `Ticket` (sebagai target atau pengirim)
-- `Novel` — belongsTo `User`, hasMany `Volume`, hasMany `Chapter`, hasMany `NovelAltTitle`, belongsToMany `Genre`, belongsToMany `Tag`, belongsToMany `Creator` (via `novel_author` dan `novel_illustrator` — dua relasi berbeda ke tabel `creators` yang sama)
+- `User` — hasMany `Novel` (as translator), hasMany `Ticket` (as target or sender)
+- `Novel` — belongsTo `User`, hasMany `Volume`, hasMany `Chapter`, hasMany `NovelAltTitle`, belongsToMany `Genre`, belongsToMany `Tag`, belongsToMany `Creator` (via `novel_author` and `novel_illustrator`: two different relations to the same `creators` table)
 - `Volume` — belongsTo `Novel`, hasMany `Chapter`
 - `Chapter` — belongsTo `Novel`, belongsTo `Volume` (nullable)
-- `Creator` — belongsToMany `Novel` (as author atau illustrator)
+- `Creator` — belongsToMany `Novel` (as author or illustrator)
 - `Genre` / `Tag` — belongsToMany `Novel`
-- `Favorite` / `ChapterRead` — tidak ada relasi ke `User`, cuma `device_id` string + FK ke `Novel`/`Chapter`
-- `Ticket` — belongsTo `User` (nullable, kalau `from_type`/`to_type` = translator/superadmin)
+- `Favorite` / `ChapterRead` — no relation to `User`, just a `device_id` string + FK to `Novel`/`Chapter`
+- `Ticket` — belongsTo `User` (nullable, when `from_type`/`to_type` = translator/superadmin)
 
 ### Route Groups
 
@@ -122,18 +122,18 @@ Route::get('/translator/{username}', ...)
 Route::post('/favorites', ...);
 Route::delete('/favorites/{novel}', ...);
 Route::get('/continue-reading', ...);
-Route::post('/tickets', ...);                          // reader submit tiket
+Route::post('/tickets', ...);                          // reader submits a ticket
 
 Route::get('/auth/login', ...);
 Route::get('/auth/callback', ...);
 Route::post('/auth/logout', ...);
 
 Route::middleware(['auth', 'role:translator'])->prefix('dashboard')->group(function () {
-    // novel & chapter CRUD milik translator sendiri, autosave, creators autocomplete
+    // the translator's own novel & chapter CRUD, autosave, creators autocomplete
 });
 
 Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
-    // dashboard stats, user role management, moderasi, genre/tag CRUD, tickets
+    // dashboard stats, user role management, moderation, genre/tag CRUD, tickets
 });
 ```
 
@@ -155,43 +155,43 @@ class NovelPolicy
 
 ### Constraints
 
-- Inertia.js — pakai `<Link>` dan `router` dari `@inertiajs/react`, bukan fetch/axios manual untuk navigasi halaman.
-- Shadcn UI sebagai component library.
+- Inertia.js: use `<Link>` and `router` from `@inertiajs/react`, not manual fetch/axios for page navigation.
+- Shadcn UI is the component library.
 - TypeScript strict mode.
-- Tiptap untuk editor chapter — mirip pengalaman nulis blog, support sisip gambar di tengah teks, autosave berkala (debounced).
-- Reader `device_id` di-generate & disimpan di cookie/localStorage saat pertama kali akses, dikirim ke server untuk favorite & chapter_reads — tidak ada UI login untuk reader sama sekali.
-- Tidak pakai Redux/Zustand — React state + Inertia shared props untuk data global (current user translator/admin, dsb).
+- Tiptap for the chapter editor: a blog-writing-like experience, supports inline images mid-text, periodic (debounced) autosave.
+- The reader `device_id` is generated & stored in a cookie/localStorage on first access and sent to the server for favorites & chapter_reads: there is no login UI for readers at all.
+- No Redux/Zustand: use React state + Inertia shared props for global data (current translator/admin user, etc.).
 
-### Struktur Halaman (Pages)
+### Page Structure (Pages)
 
 ```
 resources/js/
   Pages/
     Home.tsx                    # browse novels + filter/search
     Novels/
-      Show.tsx                  # novel detail + chapter list (badge on_revision)
-      Chapter.tsx                # baca chapter, trigger record chapter_reads
-    TranslatorProfile.tsx        # halaman profil publik translator
+      Show.tsx                  # novel detail + chapter list (on_revision badge)
+      Chapter.tsx                # read a chapter, triggers recording chapter_reads
+    TranslatorProfile.tsx        # public translator profile page
     Favorites.tsx
     ContinueReading.tsx
     Auth/
-      Callback.tsx                # handling state SSO callback (jika perlu UI)
+      Callback.tsx                # handles the SSO callback state (if a UI is needed)
     Dashboard/
-      Index.tsx                  # daftar novel milik translator
+      Index.tsx                  # list of the translator's novels
       Novels/Create.tsx
       Novels/Edit.tsx
       Chapters/Create.tsx
-      Chapters/Edit.tsx          # editor Tiptap + autosave indicator
+      Chapters/Edit.tsx          # Tiptap editor + autosave indicator
     Admin/
-      Index.tsx                  # dashboard statistik
-      Users.tsx                  # read-only + tombol grant/revoke role
+      Index.tsx                  # statistics dashboard
+      Users.tsx                  # read-only + grant/revoke role buttons
       Novels.tsx
       Genres.tsx
       Tags.tsx
       Tickets.tsx
   Components/
     NovelCard.tsx
-    ChapterEditor.tsx            # wrapper Tiptap + autosave
+    ChapterEditor.tsx            # Tiptap wrapper + autosave
     FilterBar.tsx
     FavoriteButton.tsx
     CreatorAutocomplete.tsx      # search-as-you-type author/illustrator
@@ -201,24 +201,24 @@ resources/js/
 
 ## Do Not
 
-- Do not bangun sistem auth/password lokal — semua login translator & admin lewat SSO PKCE.
-- Do not bangun sistem register/login untuk reader — reader sepenuhnya anonim.
-- Do not izinkan admin edit nama/email/avatar user secara langsung — itu domain SSO.
-- Do not izinkan translator edit/delete novel atau chapter yang bukan miliknya (selalu cek via Policy).
-- Do not bangun flow publish-approval — platform terpusat, translator publish langsung.
-- Do not simpan file cover image di luar Laravel Filesystem disk yang terkonfigurasi.
-- Do not bangun sistem comment/rating/notifikasi di MVP (out of scope).
-- Do not bangun fitur upload/edit avatar sebelum ada briefing lanjutan soal avatar SSO.
-- Do not tambah Redux, Zustand, atau state management library lain.
-- Do not skip tahap 2 logout (redirect ke SSO logout) — akan menyebabkan auto-login.
-- Do not tambah `console.log` di production code.
+- Do not build a local auth/password system: all translator & admin logins go through SSO PKCE.
+- Do not build a register/login system for readers: readers are fully anonymous.
+- Do not allow admins to edit a user's name/email/avatar directly: that is SSO's domain.
+- Do not allow translators to edit/delete novels or chapters that are not theirs (always check via Policy).
+- Do not build a publish-approval flow: the platform is centralized and translators publish directly.
+- Do not store cover image files outside the configured Laravel Filesystem disk.
+- Do not build a comment/rating/notification system in the MVP (out of scope).
+- Do not build an avatar upload/edit feature before there is a follow-up briefing about SSO avatars.
+- Do not add Redux, Zustand, or any other state management library.
+- Do not skip step 2 of logout (redirect to SSO logout): it causes auto-login.
+- Do not add `console.log` in production code.
 
 ---
 
 ## Code Style
 
-- Laravel: PSR-12, type hints di semua method, controller thin — logic di Service/Action class kalau kompleks.
-- React: functional components only, TypeScript strict mode, no inline styles (pakai Tailwind via Shadcn).
+- Laravel: PSR-12, type hints on all methods, thin controllers: put logic in a Service/Action class when it is complex.
+- React: functional components only, TypeScript strict mode, no inline styles (use Tailwind via Shadcn).
 - Commit messages: conventional commits (`feat:`, `fix:`, `chore:`).
 
 ---

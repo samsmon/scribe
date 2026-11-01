@@ -3,7 +3,7 @@
 Status: In Review
 Priority: High
 Created: 2026-07-23 20:00
-Request: Halaman `/admin/users` menampilkan semua user yang pernah login (data name/email/avatar read-only, murni dari SSO sync — tidak bisa diedit dari Scribe). Admin bisa ubah kolom `role` lokal Scribe (grant `pending` → `translator`, atau revoke kembali) via PUT `/admin/users/{id}/role`. Tidak boleh ada UI untuk edit profil user.
+Request: The `/admin/users` page shows all users who have ever logged in (name/email/avatar data is read-only, purely from SSO sync, and cannot be edited from Scribe). An admin can change Scribe's local `role` column (grant `pending` → `translator`, or revoke it back) via PUT `/admin/users/{id}/role`. There must be no UI for editing user profiles.
 
 ---
 

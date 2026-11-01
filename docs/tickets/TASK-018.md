@@ -1,9 +1,9 @@
-# TASK-018: Halaman Profil Publik Translator
+# TASK-018: Public Translator Profile Page
 
 Status: In Review
 Priority: Low
 Created: 2026-07-23 20:00
-Request: Halaman `/translator/{username}` — identitas translator di platform terpusat (pengganti konsep subdomain). Tampilkan bio, donation_url, dan daftar novel yang dipublish translator tersebut.
+Request: The `/translator/{username}` page: the translator's identity on the centralized platform (replacing the subdomain concept). Show the bio, donation_url, and the list of novels published by that translator.
 
 ---
 

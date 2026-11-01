@@ -1,15 +1,15 @@
 # Project Structure
 
-Penjelasan lengkap setiap folder dan file dalam project ini.
+A full explanation of every folder and file in this project.
 
 ```
 scribe/
-├── docs/                              # Dokumentasi proyek
+├── docs/                              # Project documentation
 │   ├── PRD.md                         # Product Requirements Document
 │   ├── SRS.md                         # Software Requirements Specification
-│   ├── TODO.md                        # Daftar pekerjaan yang belum selesai
-│   ├── STRUCTURE.md                   # File ini
-│   └── tickets/                       # TASK-XXX.md dan bugs/BUG-XXX.md
+│   ├── TODO.md                        # List of unfinished work
+│   ├── STRUCTURE.md                   # This file
+│   └── tickets/                       # TASK-XXX.md and bugs/BUG-XXX.md
 │
 ├── backend/                           # Laravel 11 + Inertia.js (serve React, monolith)
 │   ├── app/
@@ -23,16 +23,16 @@ scribe/
 │   │   │   │   ├── CreatorController.php        # Autocomplete author/illustrator
 │   │   │   │   ├── FavoriteController.php       # Favorite/unfavorite (device-based)
 │   │   │   │   ├── ReadingController.php        # Record chapter_reads, continue reading
-│   │   │   │   ├── TicketController.php         # Submit tiket (translator & reader)
-│   │   │   │   ├── TranslatorProfileController.php # Halaman profil publik translator
+│   │   │   │   ├── TicketController.php         # Submit tickets (translator & reader)
+│   │   │   │   ├── TranslatorProfileController.php # Public translator profile page
 │   │   │   │   ├── Admin/
-│   │   │   │   │   ├── DashboardController.php  # Statistik platform
+│   │   │   │   │   ├── DashboardController.php  # Platform statistics
 │   │   │   │   │   ├── UserController.php       # Read-only user list + grant/revoke role
-│   │   │   │   │   ├── NovelController.php      # Moderasi novel
-│   │   │   │   │   ├── ChapterController.php    # Moderasi chapter
+│   │   │   │   │   ├── NovelController.php      # Novel moderation
+│   │   │   │   │   ├── ChapterController.php    # Chapter moderation
 │   │   │   │   │   ├── GenreController.php      # CRUD genre
 │   │   │   │   │   ├── TagController.php        # CRUD tag
-│   │   │   │   │   └── TicketController.php     # Kelola tiket masuk
+│   │   │   │   │   └── TicketController.php     # Manage incoming tickets
 │   │   │   └── Requests/                         # Form request validation per resource
 │   │   ├── Models/
 │   │   │   ├── User.php                          # sso_id, role lokal, sso_role
@@ -48,10 +48,10 @@ scribe/
 │   │   │   └── Ticket.php
 │   │   ├── Services/
 │   │   │   └── Sso/
-│   │   │       └── SsoClient.php                 # wrapper OAuth2 PKCE flow ke sso.whitearchive.id
+│   │   │       └── SsoClient.php                 # OAuth2 PKCE flow wrapper for sso.whitearchive.id
 │   │   ├── Policies/
-│   │   │   ├── NovelPolicy.php                   # Translator hanya edit novel miliknya
-│   │   │   └── ChapterPolicy.php                  # Translator hanya edit chapter miliknya
+│   │   │   ├── NovelPolicy.php                   # Translators can only edit their own novels
+│   │   │   └── ChapterPolicy.php                  # Translators can only edit their own chapters
 │   │   └── Providers/
 │   │       └── AppServiceProvider.php
 │   │
@@ -63,58 +63,58 @@ scribe/
 │   │
 │   ├── resources/
 │   │   ├── js/
-│   │   │   ├── Pages/                             # Halaman Inertia (lihat CLAUDE.md)
-│   │   │   ├── Components/                        # NovelCard, ChapterEditor (Tiptap), CreatorAutocomplete, dll
+│   │   │   ├── Pages/                             # Inertia pages (see CLAUDE.md)
+│   │   │   ├── Components/                        # NovelCard, ChapterEditor (Tiptap), CreatorAutocomplete, etc.
 │   │   │   └── app.tsx                            # Entry point Inertia + React
 │   │   └── css/
 │   │       └── app.css                            # Tailwind + Shadcn base styles
 │   │
 │   ├── routes/
-│   │   └── web.php                                # Semua route (public, auth SSO, dashboard, admin)
+│   │   └── web.php                                # All routes (public, SSO auth, dashboard, admin)
 │   │
 │   ├── storage/
-│   │   └── app/public/covers/                     # Cover image novel (local disk MVP)
+│   │   └── app/public/covers/                     # Novel cover images (local disk, MVP)
 │   │
-│   ├── .env                                       # Environment lokal (tidak di-commit) — termasuk SSO_*
+│   ├── .env                                       # Local environment (not committed), including SSO_*
 │   ├── .env.example
 │   ├── artisan
 │   ├── composer.json
 │   └── package.json                               # Vite + React + Inertia + Shadcn + Tiptap deps
 │
 ├── scripts/
-│   ├── deploy.sh                      # Wizard deploy pertama kali ke EC2
-│   └── update.sh                      # Pull GitHub terbaru + migrate + rebuild + redeploy
+│   ├── deploy.sh                      # First-time deploy wizard for EC2
+│   └── update.sh                      # Pull latest from GitHub + migrate + rebuild + redeploy
 │
 ├── Makefile                           # make deploy / make update
-├── README.md                          # Dokumentasi utama
+├── README.md                          # Main documentation
 └── .claude/
-    └── CLAUDE.md                      # Instruksi untuk Claude Code
+    └── CLAUDE.md                      # Instructions for Claude Code
 ```
 
 ---
 
-## Alur Request
+## Request Flow
 
 ```
-Browser (reader, anonim — device_id di cookie)
+Browser (reader, anonymous — device_id in a cookie)
   │
   ├─► GET  /                    → NovelController@index    (Inertia::render('Home'))
   ├─► GET  /novels/{slug}       → NovelController@show      (Inertia::render('Novels/Show'))
   ├─► GET  /novels/{slug}/{ch}  → ChapterController@show    (record ChapterRead via device_id)
   ├─► POST /favorites           → FavoriteController@store  (upsert by device_id + novel_id)
   │
-Browser (translator/admin — session dari SSO)
+Browser (translator/admin — session from SSO)
   ├─► GET  /auth/login          → SsoController@redirect    (PKCE challenge + state → SSO authorize)
-  ├─► GET  /auth/callback       → SsoController@callback    (tukar code, sync profile, buat session)
+  ├─► GET  /auth/callback       → SsoController@callback    (exchange code, sync profile, create session)
   │
   ├─► POST /dashboard/novels    → NovelController@store     (NovelPolicy::create, role:translator)
-  ├─► PUT  /dashboard/novels/{id} → NovelController@update  (NovelPolicy::update — cek owner)
+  ├─► PUT  /dashboard/novels/{id} → NovelController@update  (NovelPolicy::update — check owner)
   ├─► PATCH /dashboard/.../chapters/{id}/autosave → ChapterController@autosave
   │
-  └─► PUT  /admin/users/{id}/role → Admin\UserController@updateRole (role:admin middleware, hanya ubah role lokal)
+  └─► PUT  /admin/users/{id}/role → Admin\UserController@updateRole (role:admin middleware, only changes the local role)
 ```
 
-Inertia me-render React component langsung dari response Laravel — tidak ada REST API layer terpisah untuk halaman utama.
+Inertia renders React components directly from the Laravel response; there is no separate REST API layer for the main pages.
 
 ---
 
@@ -122,25 +122,25 @@ Inertia me-render React component langsung dari response Laravel — tidak ada R
 
 ### backend/.env
 
-| Key | Contoh | Keterangan |
+| Key | Example | Description |
 |-----|--------|------------|
-| `APP_ENV` | `production` | Mode Laravel |
+| `APP_ENV` | `production` | Laravel mode |
 | `APP_KEY` | `base64:...` | Generate via `artisan key:generate` |
-| `APP_URL` | `https://scribe.suryatmaja.dev` | URL aplikasi |
+| `APP_URL` | `https://scribe.suryatmaja.dev` | Application URL |
 | `DB_CONNECTION` | `pgsql` | PostgreSQL |
-| `DB_HOST` / `DB_PORT` / `DB_DATABASE` / `DB_USERNAME` / `DB_PASSWORD` | — | Kredensial PostgreSQL |
-| `FILESYSTEM_DISK` | `public` | Disk lokal untuk cover image (MVP) |
-| `SSO_CLIENT_ID` | `xxx` | Client ID dari sso.whitearchive.id |
-| `SSO_CLIENT_SECRET` | `xxx` | Client secret (jangan pernah expose ke frontend) |
-| `SSO_REDIRECT_URI` | `https://scribe.suryatmaja.dev/auth/callback` | Callback URL terdaftar di SSO |
-| `SSO_BASE_URL` | `https://sso.whitearchive.id` | Base URL identity provider |
+| `DB_HOST` / `DB_PORT` / `DB_DATABASE` / `DB_USERNAME` / `DB_PASSWORD` | — | PostgreSQL credentials |
+| `FILESYSTEM_DISK` | `public` | Local disk for cover images (MVP) |
+| `SSO_CLIENT_ID` | `xxx` | Client ID from sso.whitearchive.id |
+| `SSO_CLIENT_SECRET` | `xxx` | Client secret (never expose it to the frontend) |
+| `SSO_REDIRECT_URI` | `https://scribe.suryatmaja.dev/auth/callback` | Callback URL registered in SSO |
+| `SSO_BASE_URL` | `https://sso.whitearchive.id` | Identity provider base URL |
 
 ---
 
-## Catatan Migrasi dari Iterasi Sebelumnya
+## Migration Notes from Previous Iterations
 
-Repo ini sudah melewati 2 pivot:
-1. File-to-markdown converter (API Laravel + frontend Vite terpisah, no DB) → digantikan total.
-2. Light novel CMS dengan reader login lokal & translator self-register-lalu-di-promote → digantikan oleh model saat ini: **platform terpusat, auth translator/admin via SSO whitearchive.id, reader sepenuhnya anonim device-based, tanpa publish-approval flow.**
+This repo has gone through 2 pivots:
+1. File-to-markdown converter (Laravel API + separate Vite frontend, no DB) → fully replaced.
+2. A light novel CMS with local reader login & translators who self-register and then get promoted → replaced by the current model: **a centralized platform, translator/admin auth via SSO whitearchive.id, fully anonymous device-based readers, and no publish-approval flow.**
 
-Struktur di atas adalah versi final MVP yang berlaku sekarang.
+The structure above is the final MVP version in effect now.

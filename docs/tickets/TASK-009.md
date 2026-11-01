@@ -1,9 +1,9 @@
-# TASK-009: Genre & Tag Attach/Detach ke Novel (Translator)
+# TASK-009: Attach/Detach Genres & Tags to a Novel (Translator)
 
 Status: In Review
 Priority: Medium
 Created: 2026-07-23 20:00
-Request: UI di form novel (translator dashboard) untuk attach/detach genre dan tag (pivot novel_genre, novel_tag). Genre dan tag sendiri dikelola admin (TASK-006), translator hanya pilih dari list yang sudah ada.
+Request: UI in the novel form (translator dashboard) to attach/detach genres and tags (pivots novel_genre, novel_tag). Genres and tags themselves are managed by admins (TASK-006); translators only pick from the existing list.
 
 ---
 

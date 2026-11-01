@@ -3,9 +3,9 @@
 Status: In Review
 Priority: Medium
 Created: 2026-07-23 20:00
-Request: Translator bisa submit tiket (bug report / feature request) ke superadmin via `/dashboard/tickets`. Reader (tanpa akun, device-based) bisa submit tiket ke superadmin atau ke translator tertentu (misal request chapter) via `/tickets`. Admin kelola & respons tiket masuk di `/admin/tickets`. Detail UI halaman reader untuk memilih translator tujuan didiskusikan terpisah — buat backend & data model dulu di ticket ini, UI reader-facing lengkap masuk P1.
+Request: A translator can submit a ticket (bug report / feature request) to the superadmin via `/dashboard/tickets`. A reader (no account, device-based) can submit a ticket to the superadmin or to a specific translator (e.g. a chapter request) via `/tickets`. Admins manage & respond to incoming tickets at `/admin/tickets`. The reader-page UI details for choosing the destination translator are discussed separately: build the backend & data model first in this ticket, the full reader-facing UI goes into P1.
 
-Karena `POST /tickets` bisa diakses reader anonim tanpa akun, wajib ada basic spam protection: rate-limit per `device_id`/IP (mis. throttle Laravel), dan pertimbangkan honeypot field atau captcha ringan kalau spam jadi masalah nyata setelah live.
+Because `POST /tickets` is accessible to anonymous readers without an account, basic spam protection is required: rate-limit per `device_id`/IP (e.g. Laravel throttle), and consider a honeypot field or a light captcha if spam becomes a real problem after going live.
 
 ---
 

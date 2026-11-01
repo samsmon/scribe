@@ -1,9 +1,9 @@
-# TASK-007: Novel/Series CRUD (Translator) + Cover Upload + Judul Alternatif
+# TASK-007: Novel/Series CRUD (Translator) + Cover Upload + Alternative Titles
 
 Status: In Review
 Priority: High
 Created: 2026-07-23 20:00
-Request: Translator dashboard untuk create/edit/delete novel miliknya: title (judul original), slug (auto-generate), synopsis, cover_image (upload local disk), origin_language, translation_language, status. Termasuk manage judul alternatif multi-bahasa (novel_alt_titles: language + title, bisa lebih dari satu row per novel).
+Request: A translator dashboard to create/edit/delete their own novels: title (original title), slug (auto-generated), synopsis, cover_image (local disk upload), origin_language, translation_language, status. Including management of multi-language alternative titles (novel_alt_titles: language + title, more than one row per novel allowed).
 
 ---
 

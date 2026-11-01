@@ -1,9 +1,9 @@
-# TASK-004: Admin — Dashboard Statistik
+# TASK-004: Admin — Statistics Dashboard
 
 Status: In Review
 Priority: Medium
 Created: 2026-07-23 20:00
-Request: Halaman `/admin` menampilkan statistik platform: jumlah translator aktif, jumlah novel yang sudah released (status bukan draft), jumlah chapter published, dan metrik lain yang relevan (jumlah tiket open, dsb).
+Request: The `/admin` page shows platform statistics: number of active translators, number of released novels (status not draft), number of published chapters, and other relevant metrics (number of open tickets, etc.).
 
 ---
 

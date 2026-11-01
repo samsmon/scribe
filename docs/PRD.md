@@ -2,107 +2,107 @@
 
 ## Problem Statement
 
-Freelance translator light novel butuh platform terpusat untuk publish hasil terjemahan tanpa perlu infrastruktur sendiri. Reader butuh satu tempat untuk browse dan baca karya dari banyak translator sekaligus, tanpa friksi pendaftaran akun.
+Freelance light novel translators need a centralized platform to publish their translations without running their own infrastructure. Readers need a single place to browse and read works from many translators at once, without the friction of creating an account.
 
 ## Target Users
 
-- **Translator**: freelance/hobbyist penerjemah light novel (JP/KR/CN → ID/EN/dst) yang publish karya secara terstruktur (series → volume → chapter). Login via SSO whitearchive.id.
-- **Reader**: pembaca anonim, tanpa akun. Browse, baca, favorite, dan lanjut baca lintas semua translator di satu platform.
-- **Admin (superadmin)**: pengelola platform. Login via SSO whitearchive.id dengan role `superadmin`.
+- **Translator**: freelance/hobbyist light novel translators (JP/KR/CN → ID/EN/etc.) who publish their work in a structured way (series → volume → chapter). Log in via SSO whitearchive.id.
+- **Reader**: anonymous readers, no account. Browse, read, favorite, and continue reading across all translators on one platform.
+- **Admin (superadmin)**: platform manager. Logs in via SSO whitearchive.id with the `superadmin` role.
 
 ## Platform Model
 
-Scribe adalah **salah satu project di bawah payung White Archive**, bukan platform utama/terpusat White Archive itu sendiri. `whitearchive.id` (root domain) adalah landing page White Archive yang mengenalkan ekosistem dan daftar seluruh project di bawahnya — di luar scope Scribe. Scribe hidup di subdomain sendiri (`scribe.whitearchive.id`, staging: `scribe.suryatmaja.dev`).
+Scribe is **one of the projects under the White Archive umbrella**, not the main/centralized White Archive platform itself. `whitearchive.id` (the root domain) is the White Archive landing page that introduces the ecosystem and lists all the projects under it, which is outside Scribe's scope. Scribe lives on its own subdomain (`scribe.whitearchive.id`, staging: `scribe.suryatmaja.dev`).
 
-Di dalam scope Scribe sendiri, modelnya tetap satu platform terpusat — **bukan** subdomain per translator. Semua novel dari semua translator Scribe tampil di satu katalog. Tiap novel/post ditandai translator pemiliknya; translator punya halaman profil sendiri sebagai identitas, tanpa perlu domain terpisah.
+Within Scribe's own scope, the model is still a single centralized platform, **not** a subdomain per translator. All novels from all Scribe translators appear in one catalog. Each novel/post is tagged with its owning translator; translators have their own profile page as their identity, without needing a separate domain.
 
 ## Core User Stories
 
-### Reader (tanpa login/akun)
-- Sebagai reader, saya ingin browse daftar novel dengan filter genre/tag/status dan search judul, supaya cepat menemukan bacaan dari translator manapun.
-- Sebagai reader, saya ingin melihat detail novel (sinopsis, author, illustrator, judul alternatif, daftar chapter per volume), supaya tahu progress novel sebelum baca.
-- Sebagai reader, saya ingin membaca chapter langsung di browser tanpa perlu akun.
-- Sebagai reader, saya ingin chapter yang sedang direvisi translator ditandai jelas dan tidak bisa dibuka, supaya saya tahu itu belum final.
-- Sebagai reader, saya ingin favorite novel (tersimpan di device saya), supaya bisa cek update tanpa perlu akun.
-- Sebagai reader, saya ingin sistem mengingat chapter mana yang sudah/belum saya baca per novel (device-based), supaya bisa lanjut baca dari chapter terakhir seperti Wattpad.
-- Sebagai reader, saya ingin mengirim tiket ke superadmin atau ke translator tertentu (misal request chapter), supaya bisa berkomunikasi tanpa perlu akun.
+### Reader (no login/account)
+- As a reader, I want to browse the novel list with genre/tag/status filters and title search, so I can quickly find reading material from any translator.
+- As a reader, I want to see novel details (synopsis, author, illustrator, alternative titles, chapter list per volume), so I know the novel's progress before reading.
+- As a reader, I want to read chapters directly in the browser without an account.
+- As a reader, I want chapters being revised by the translator to be clearly marked and unopenable, so I know they are not final.
+- As a reader, I want to favorite novels (stored on my device), so I can check for updates without an account.
+- As a reader, I want the system to remember which chapters I have and have not read per novel (device-based), so I can continue from my last chapter like on Wattpad.
+- As a reader, I want to send a ticket to the superadmin or to a specific translator (e.g. a chapter request), so I can communicate without an account.
 
 ### Translator (login via SSO)
-- Sebagai translator, saya ingin login pakai akun SSO whitearchive.id yang sudah ada, supaya tidak perlu daftar akun baru.
-- Sebagai translator, saya ingin CRUD series (judul original, judul alternatif multi-bahasa, sinopsis, cover, author, illustrator, genre, tag), supaya mengelola karya saya dengan metadata lengkap.
-- Sebagai translator, saya ingin memilih author/illustrator dari daftar yang sudah ada via autocomplete (atau bikin baru kalau belum ada), supaya data tidak duplikat.
-- Sebagai translator, saya ingin CRUD volume (opsional) dan menulis chapter dengan editor mirip blog (bisa sisip gambar di tengah teks), supaya publish terjemahan dengan format rapi.
-- Sebagai translator, saya ingin chapter yang sedang saya tulis ke-autosave otomatis, supaya tidak kehilangan progress kalau ada gangguan (laptop mati, dsb).
-- Sebagai translator, saya ingin set status chapter (draft / on revision / published), supaya bisa menandai chapter yang perlu direvisi tanpa menghapusnya dari sistem.
-- Sebagai translator, saya ingin publish novel/chapter langsung tanpa approval admin (karena platform terpusat, bukan subdomain terpisah).
-- Sebagai translator, saya ingin mengirim tiket ke superadmin (bug report / feature request), supaya bisa melaporkan masalah teknis.
+- As a translator, I want to log in with my existing SSO whitearchive.id account, so I do not need to register a new one.
+- As a translator, I want to CRUD series (original title, multi-language alternative titles, synopsis, cover, author, illustrator, genre, tag), so I can manage my works with complete metadata.
+- As a translator, I want to pick an author/illustrator from the existing list via autocomplete (or create a new one if missing), so data is not duplicated.
+- As a translator, I want to CRUD volumes (optional) and write chapters with a blog-like editor (with inline images mid-text), so I can publish translations in a neat format.
+- As a translator, I want the chapter I am writing to be autosaved automatically, so I do not lose progress if something goes wrong (laptop shuts off, etc.).
+- As a translator, I want to set a chapter's status (draft / on revision / published), so I can mark a chapter that needs revision without removing it from the system.
+- As a translator, I want to publish novels/chapters directly without admin approval (because the platform is centralized, not separate subdomains).
+- As a translator, I want to send a ticket to the superadmin (bug report / feature request), so I can report technical problems.
 
 ### Admin (superadmin, login via SSO)
-- Sebagai admin, saya ingin melihat dashboard statistik (jumlah translator, jumlah novel yang sudah rilis, dsb), supaya punya gambaran kondisi platform.
-- Sebagai admin, saya ingin melihat daftar user/translator (read-only — profil dikelola via SSO, bukan di Scribe), dan mengubah role lokal Scribe (grant/revoke akses translator).
-- Sebagai admin, saya ingin moderasi (hapus) novel/chapter yang melanggar.
-- Sebagai admin, saya ingin mengelola master data genre dan tag.
-- Sebagai admin, saya ingin menerima dan merespons tiket dari translator maupun reader.
+- As an admin, I want to see a statistics dashboard (number of translators, number of released novels, etc.), so I have a picture of the platform's condition.
+- As an admin, I want to see the list of users/translators (read-only; profiles are managed via SSO, not in Scribe), and change the local Scribe role (grant/revoke translator access).
+- As an admin, I want to moderate (delete) novels/chapters that violate the rules.
+- As an admin, I want to manage the genre and tag master data.
+- As an admin, I want to receive and respond to tickets from both translators and readers.
 
 ## Features
 
 ### P0 (Must Have — MVP)
 
-- SSO login (OAuth2 + PKCE) untuk translator & admin — bukan sistem auth sendiri
-- Local role gating: user baru dari SSO berstatus `pending` sampai admin grant role `translator`; SSO role `superadmin` otomatis map ke admin Scribe
-- Admin dashboard: statistik platform (jumlah translator, jumlah novel released, dll)
-- Admin: lihat user (read-only) + grant/revoke role translator
-- Admin: moderasi novel & chapter (delete)
-- Admin: CRUD genre & tag
-- Translator: CRUD series/novel — judul original, judul alternatif (multi), sinopsis, cover, origin/translation language
-- Translator: author & illustrator sebagai entity dengan autocomplete (create-if-not-exist)
-- Translator: attach/detach genre & tag ke novel
-- Translator: CRUD volume (opsional terhadap chapter)
-- Translator: CRUD chapter — editor blog-style dengan sisip gambar, autosave, status draft/on_revision/published
-- Reader: browse novel dengan filter genre/tag/status + search judul, tanpa login
-- Reader: halaman detail novel (info lengkap + daftar chapter per volume); chapter on_revision ditandai dan tidak bisa dibuka
-- Reader: baca chapter, tanpa login
-- Reader: favorite novel (device-based, tanpa akun)
-- Reader: continue reading + indikator chapter terbaca/belum (device-based)
-- Ticketing: translator → superadmin (bug/feature request); reader → superadmin atau translator tertentu
+- SSO login (OAuth2 + PKCE) for translators & admins, not a custom auth system
+- Local role gating: new users from SSO are `pending` until an admin grants the `translator` role; the SSO role `superadmin` is automatically mapped to Scribe admin
+- Admin dashboard: platform statistics (number of translators, number of released novels, etc.)
+- Admin: view users (read-only) + grant/revoke the translator role
+- Admin: moderate novels & chapters (delete)
+- Admin: genre & tag CRUD
+- Translator: series/novel CRUD: original title, alternative titles (multiple), synopsis, cover, origin/translation language
+- Translator: author & illustrator as entities with autocomplete (create-if-not-exist)
+- Translator: attach/detach genres & tags to a novel
+- Translator: volume CRUD (optional for chapters)
+- Translator: chapter CRUD: blog-style editor with inline images, autosave, draft/on_revision/published status
+- Reader: browse novels with genre/tag/status filters + title search, no login
+- Reader: novel detail page (full info + chapter list per volume); on_revision chapters are marked and cannot be opened
+- Reader: read chapters, no login
+- Reader: favorite novels (device-based, no account)
+- Reader: continue reading + read/unread chapter indicator (device-based)
+- Ticketing: translator → superadmin (bug/feature request); reader → superadmin or a specific translator
 
 ### P1 (Should Have)
 
-- Halaman profil publik translator (list karya + bio + donation link)
-- Pagination / infinite scroll di listing novel
-- Reader ticket page dengan pemilihan tujuan translator (UI detail didiskusikan terpisah)
+- Public translator profile page (list of works + bio + donation link)
+- Pagination / infinite scroll in the novel listing
+- Reader ticket page with translator destination selection (UI details discussed separately)
 
 ### P2 (Nice to Have)
 
-- Swap storage cover image dari local disk ke S3/R2
-- Full-text search upgrade (`to_tsvector` PostgreSQL)
+- Swap cover image storage from local disk to S3/R2
+- Full-text search upgrade (PostgreSQL `to_tsvector`)
 - Dark mode
-- Sinkronisasi favorite/reading progress reader lintas device (butuh keputusan ulang soal akun reader kalau dibutuhkan nanti)
+- Syncing reader favorites/reading progress across devices (needs a revisit of the reader account decision if required later)
 
 ## Out of Scope (MVP)
 
-- Sistem koin / monetisasi internal (hanya link eksternal Trakteer/Tako di profil translator)
+- Internal coin / monetization system (only external Trakteer/Tako links on the translator profile)
 - Comment & rating system
-- Notifikasi (email/push)
+- Notifications (email/push)
 - RSS feed
 - PWA / mobile app
 - Subdomain per translator
-- Akun/login untuk reader
+- Accounts/login for readers
 
 ## Security Requirements
 
-- Auth sepenuhnya via SSO (OAuth2 Authorization Code + PKCE), tidak ada password lokal
-- State parameter tervalidasi server-side untuk cegah CSRF saat login
-- Access & refresh token disimpan terenkripsi di server, tidak pernah ke client
-- Logout wajib 2 tahap: clear session lokal, lalu redirect ke SSO logout endpoint
-- Authorization berbasis Laravel Policy: translator hanya boleh modifikasi novel/chapter miliknya
-- Admin tidak bisa edit data profil user (nama/email/avatar) — itu domain SSO, admin cuma atur role lokal Scribe
-- Reader tracking (favorite, reading progress) berbasis device_id anonim, tidak terikat identitas pribadi apapun
-- HTTPS enforced di production
+- Auth is entirely via SSO (OAuth2 Authorization Code + PKCE), no local passwords
+- The state parameter is validated server-side to prevent CSRF during login
+- Access & refresh tokens are stored encrypted on the server and never sent to the client
+- Logout is mandatory 2-step: clear the local session, then redirect to the SSO logout endpoint
+- Laravel Policy-based authorization: translators may only modify their own novels/chapters
+- Admins cannot edit user profile data (name/email/avatar): that is SSO's domain, admins only manage the local Scribe role
+- Reader tracking (favorites, reading progress) is based on an anonymous device_id, not tied to any personal identity
+- HTTPS enforced in production
 
 ## Success Metrics
 
-- Translator bisa login via SSO dan publish novel pertama (series + minimal 1 chapter) end-to-end tanpa approval admin
-- Reader bisa browse → baca → favorite dalam satu sesi tanpa perlu akun sama sekali
-- Continue reading & status baca/belum akurat 100% per device
-- Tiket dari translator/reader sampai ke tujuan yang benar (superadmin atau translator spesifik)
+- A translator can log in via SSO and publish their first novel (series + at least 1 chapter) end-to-end without admin approval
+- A reader can browse → read → favorite in one session without needing any account
+- Continue reading & read/unread status are 100% accurate per device
+- Tickets from translators/readers reach the correct destination (superadmin or a specific translator)

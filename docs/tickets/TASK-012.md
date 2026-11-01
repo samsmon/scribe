@@ -3,7 +3,7 @@
 Status: In Review
 Priority: High
 Created: 2026-07-23 20:00
-Request: Halaman utama publik (tanpa login): list novel dari semua translator dengan filter genre, tag, status, dan search by title (PostgreSQL ILIKE). Hanya novel non-draft yang tampil.
+Request: The public home page (no login): a list of novels from all translators with genre, tag, status filters and search by title (PostgreSQL ILIKE). Only non-draft novels are shown.
 
 ---
 

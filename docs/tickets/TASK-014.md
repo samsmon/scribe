@@ -3,7 +3,7 @@
 Status: In Review
 Priority: High
 Created: 2026-07-23 20:00
-Request: Halaman baca chapter, route dengan dan tanpa volume (`/novels/{slug}/{chapter}` dan `/novels/{slug}/vol-{vol}/{chapter}`). Render content Tiptap. Generate `device_id` (cookie/localStorage) kalau reader belum punya, lalu upsert row `chapter_reads` (device_id + chapter_id) tiap kali chapter dibuka.
+Request: The chapter reading page, with routes with and without a volume (`/novels/{slug}/{chapter}` and `/novels/{slug}/vol-{vol}/{chapter}`). Render Tiptap content. Generate a `device_id` (cookie/localStorage) if the reader does not have one, then upsert a `chapter_reads` row (device_id + chapter_id) every time a chapter is opened.
 
 ---
 
